@@ -39,14 +39,14 @@ try:
 except FileNotFoundError:
 	print('runlog.txt not found.\nHow many days back should I start scraping?')
 	startTimeInput = int(input())
-	startTime = datetime.datetime.strptime(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")), '%Y-%m-%d %H:%M:%S')
+	startTime = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), '%Y-%m-%d %H:%M:%S')
 	oldTime = (startTime - datetime.timedelta(days=startTimeInput))
 
 # Step 1b: append the current time to the runlog file.
 
 currentTime = datetime.datetime.now()
 newTimeLog = open('runlog.txt', 'a')
-newTimeLog.write(str(currentTime.strftime("%Y-%m-%d %H:%M:%S")) + '\n')
+newTimeLog.write(currentTime.strftime("%Y-%m-%d %H:%M:%S") + '\n')
 newTimeLog.close()
 
 # Step 2, Scraping: scrape various job websites for ads posted since the script last ran.
