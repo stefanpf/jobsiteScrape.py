@@ -114,9 +114,17 @@ def scrapeBsj(category):
 		print('No results found.')
 
 # TODO Site 2, stepstone.de
+
+def scrapeStepstone():
+
 # TODO Site 3, indeed.de
+
+def scrapeIndeed():
+
 # TODO Site 4, monster.de
 
+def scrapeMonster():
+	
 # Step 3, Results: write results to a spreadsheet for easy digestion.
 # Results should come as a nested dictionary like so:
 # {<jobTitle> : {
@@ -143,6 +151,13 @@ def writeToXls(dataDictionary):
 		sheet.column_dimensions['C'].width = 20
 		sheet.column_dimensions['D'].width = 30
 		sheet.column_dimensions['E'].width = 30
+		from openpyxl.styles import Font
+		topRowFontObj = Font(name='Arial', bold=True, size=12)
+		sheet['A1'].font = topRowFontObj
+		sheet['B1'].font = topRowFontObj
+		sheet['C1'].font = topRowFontObj
+		sheet['D1'].font = topRowFontObj
+		sheet['E1'].font = topRowFontObj
 		sheet['A1'].value = 'Job Title'
 		sheet['B1'].value = 'Company'
 		sheet['C1'].value = 'Date'
@@ -170,12 +185,12 @@ def writeToXls(dataDictionary):
 		rowNum += 1
 
 	wb.save('Results %s.xlsx' % datetime.datetime.today().strftime('%Y-%m-%d'))
-	print('Workbood saved and closed.')
+	print('Workbook saved and closed.')
 
 	return True
 
 
-# TODO: Step 4, Call the scraping functions and print elapsed time at the very end.
+# TODO: Step 4, Call the scraping functions.
 
 bsjCategory = ['operations', 'engineering'] #, 'marketing', 'other']
 
