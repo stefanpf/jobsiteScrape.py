@@ -1,0 +1,7 @@
+# Python cache files
+*.pyc
+__pycache__
+
+# Output from script
+*.xlsx
+runlog.txt
