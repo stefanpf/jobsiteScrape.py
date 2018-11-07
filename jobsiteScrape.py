@@ -112,7 +112,7 @@ def scrape_stepstone(search_string):
 
             job_title = soup.select('.listing__job-title')[0].getText()
             company = soup.select('.listing__company-name')[0].getText().strip()
-            job_desc = soup.select('.offer__section')[0].getText()
+            job_desc = soup.select('.offer__content')[1].getText()
             date_posted = soup.select('.date-time-ago')[0].get('data-date')
 
             results[job_title] = {}
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     stepstone_search_string = ("5/ergebnisliste.html"
                                "?ws=Berlin"
                                "&fu=6000000%2C1000000%2C7002000%2C7006000"
-                               "&li=50&of=0" # no. of search results to display
+                               "&li=10&of=0" # no. of search results to display
                                "&fci=419239&an=facets&fu=7008000"
                                "&fid=7008000&fn=categories&fa=select")
     scrape_stepstone(stepstone_search_string)
