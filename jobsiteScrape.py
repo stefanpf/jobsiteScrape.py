@@ -234,10 +234,10 @@ if __name__ == "__main__":
 
     # Define arguments and call scraping functions.
     header = {'User-Agent': 'Mozilla/5.0'}
-    bsj_category = ['operations', 'engineering'] #, 'marketing', 'other']
+    bsj_categories = ['operations', 'engineering'] #, 'marketing', 'other']
 
-    for i in range(len(bsj_category)):
-        scrape_bsj(bsj_category[i])
+    for category in bsj_categories:
+        scrape_bsj(category)
 
     # This is a test string taken from the URL based on a number
     # of selected search criteria.
