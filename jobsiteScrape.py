@@ -10,125 +10,8 @@ import os
 import datetime
 import time
 import re
-import requests
-import bs4
 import openpyxl
-
-# Define functions.
-#
-# Site 1, berlinstartupjobs.com
-#
-# Currently scrapes links from the first page of categories passed as
-# an argument.
-
-
-def scrape_bsj(category):
-
-    print("Scraping berlinstartupjobs.com/%s/ for links..." % category)
-    res = requests.get('http://berlinstartupjobs.com/%s/' % category,
-                       headers=header)
-    res.raise_for_status()
-
-    soup = bs4.BeautifulSoup(res.text, features="lxml")
-
-    link_elems = soup.select('.product-listing-h2 a')
-    post_elems = soup.select('.product-listing-item')
-    post_date_elems = soup.select('.product-listing-date')
-
-    results = {}
-
-    for i in range(len(post_elems)):
-
-        post_date = datetime.datetime.strptime(post_date_elems[i].getText(),
-                                               '%B %d, %Y')
-
-        if (post_date - old_time) <= datetime.timedelta(seconds=0):
-            continue
-
-        else:
-
-            link_URL = link_elems[i].get('href')
-
-            # Regex to match the job title and company name from h1.
-            job_title_regex = re.compile(r'.+?(?=.\/\/.)')
-            company_regex = re.compile(r'(?<=.\/\/.).+')
-
-            res = requests.get(link_URL, headers=header)
-            res.raise_for_status()
-
-            soup = bs4.BeautifulSoup(res.text, features="lxml")
-
-            title_elem = soup.select('.bsj-h1')[0].getText()
-            job_title = job_title_regex.search(title_elem).group()
-            company = company_regex.search(title_elem).group()
-            job_desc = soup.select('.job-details')[0].getText()
-            date_posted = soup.select('.product-listing-date')[0].getText()
-
-            results[job_title] = {}
-            results[job_title]['company'] = company
-            results[job_title]['link'] = link_URL
-            results[job_title]['desc'] = job_desc
-            results[job_title]['date'] = date_posted
-
-    print("Finished scraping berlinstartupjobs.com/%s/" % category)
-
-    if results:
-        print("Writing results to spreadsheet...")
-        write_to_XLS(results)
-    else:
-        print("No results found.")
-
-
-def scrape_stepstone(search_string):
-    print("Scraping stepstone.de for links...")
-    res = requests.get('http://www.stepstone.de/%s' % search_string,
-                       headers=header)
-    res.raise_for_status()
-
-    soup = bs4.BeautifulSoup(res.text, features="lxml")
-
-    link_elems = soup.select('.job-element__url')
-    post_date_elems = soup.select('.date-time-ago')
-
-    results = {}
-
-    for i in range(len(link_elems)):
-
-        post_date = datetime.datetime.strptime(post_date_elems[i]
-                                               .get('data-date'),
-                                               '%Y-%m-%d %H:%M:%S')
-
-        if (post_date - old_time) <= datetime.timedelta(seconds=0):
-            continue
-
-        else:
-            link_URL_regex = re.compile(r'.+?(?=\?)')
-            link_URL = link_URL_regex.search(link_elems[i].get('href')).group()
-
-            res = requests.get(link_URL, headers=header)
-            res.raise_for_status()
-
-            soup = bs4.BeautifulSoup(res.text, features="lxml")
-
-            job_title = soup.select('.listing__job-title')[0].getText()
-            company = soup.select('.listing__company-name')[0].getText().strip()
-            job_desc = soup.select('.offer__content')[1].getText()
-            date_posted = soup.select('.date-time-ago')[0].get('data-date')
-
-            results[job_title] = {}
-            results[job_title]['company'] = company
-            results[job_title]['link'] = link_URL
-            results[job_title]['desc'] = job_desc
-            results[job_title]['date'] = date_posted
-
-    print("Finished scraping stepstone.de")
-
-    if results:
-        print("Writing results to spreadsheet...")
-        write_to_XLS(results)
-    else:
-        print("No results found.")
-
+from scrapers import scrape_stepstone, scrape_bsj
 
 # Write results to a spreadsheet for easy digestion.
 #
@@ -138,6 +21,17 @@ def scrape_stepstone(search_string):
 #		<desc> : value,
 #		<link> : value,
 #		<date> : value}}
+
+
+def clean_results(results):
+
+    multi_newlines_regex = re.compile(r'\n{3,}')
+
+    for key, value in results.items():
+        value['desc'] = re.sub(multi_newlines_regex, "\n\n", value['desc'])
+    print('Cleaning up results...')
+
+    return results
 
 
 def write_to_XLS(data_dictionary):
@@ -233,11 +127,12 @@ if __name__ == "__main__":
     new_time_log.close()
 
     # Define arguments and call scraping functions.
-    header = {'User-Agent': 'Mozilla/5.0'}
     bsj_categories = ['operations', 'engineering'] #, 'marketing', 'other']
 
     for category in bsj_categories:
-        scrape_bsj(category)
+        bsj_results = scrape_bsj(category, old_time)
+        if bsj_results:
+            write_to_XLS(bsj_results)
 
     # This is a test string taken from the URL based on a number
     # of selected search criteria.
@@ -247,7 +142,10 @@ if __name__ == "__main__":
                                "&li=10&of=0" # no. of search results to display
                                "&fci=419239&an=facets&fu=7008000"
                                "&fid=7008000&fn=categories&fa=select")
-    scrape_stepstone(stepstone_search_string)
+    stepstone_results = scrape_stepstone(stepstone_search_string, old_time)
+    if stepstone_results:
+        clean_results(stepstone_results)
+        write_to_XLS(stepstone_results)
 
     # Print elapsed time.
     elapsed_run_time = time.time() - start_run_time
