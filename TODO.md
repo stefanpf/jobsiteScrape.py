@@ -6,11 +6,9 @@ NECESSARY:
 
 - write_to_XLS(): prettify output, especially column D. Deduplicate results.
 
-- scrape_stepstone()
+- scrape_indeed(): their search functionality is extremely limited. Maybe don't include.
 
-- scrape_indeed()
-
-- scrape_monster()
+- scrape_monster(): their search functionality is extremely limited. Maybe don't include.
 
 
 NICE TO HAVE:
