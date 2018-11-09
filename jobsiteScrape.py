@@ -4,17 +4,16 @@
 # placements,  selects the interesting ones based on some hard-coded
 # criteria, and saves  the results in an easy to read spreadsheet.
 #
-# v0.3 - 2018-11-06
+# v0.4 - 2018-11-08
 
 import os
 import datetime
 import time
 import re
 import openpyxl
+from openpyxl.styles import Alignment, Font
 from scrapers import scrape_stepstone, scrape_bsj
 
-# Write results to a spreadsheet for easy digestion.
-#
 # Results should come as a nested dictionary like so:
 # {<jobTitle> : {
 #		<company> : value,
@@ -50,15 +49,14 @@ def write_to_XLS(data_dictionary):
         sheet.column_dimensions['A'].width = 30
         sheet.column_dimensions['B'].width = 30
         sheet.column_dimensions['C'].width = 20
-        sheet.column_dimensions['D'].width = 30
+        sheet.column_dimensions['D'].width = 120
         sheet.column_dimensions['E'].width = 30
-        from openpyxl.styles import Font
-        top_row_font_obj = Font(name='Arial', bold=True, size=12)
-        sheet['A1'].font = top_row_font_obj
-        sheet['B1'].font = top_row_font_obj
-        sheet['C1'].font = top_row_font_obj
-        sheet['D1'].font = top_row_font_obj
-        sheet['E1'].font = top_row_font_obj
+        top_row_style_obj = Font(name='Arial', bold=True, size=12)
+        sheet['A1'].font = top_row_style_obj
+        sheet['B1'].font = top_row_style_obj
+        sheet['C1'].font = top_row_style_obj
+        sheet['D1'].font = top_row_style_obj
+        sheet['E1'].font = top_row_style_obj
         sheet['A1'].value = "Job Title"
         sheet['B1'].value = "Company"
         sheet['C1'].value = "Date"
@@ -80,10 +78,14 @@ def write_to_XLS(data_dictionary):
 
     for key, value in data_dictionary.items():
         sheet.cell(row=row_num, column=1).value = key
+        sheet.cell(row=row_num, column=1).alignment = Alignment(vertical='top')
         sheet.cell(row=row_num, column=2).value = value['company']
+        sheet.cell(row=row_num, column=2).alignment = Alignment(vertical='top')
         sheet.cell(row=row_num, column=3).value = value['date']
+        sheet.cell(row=row_num, column=3).alignment = Alignment(vertical='top')
         sheet.cell(row=row_num, column=4).value = value['desc']
         sheet.cell(row=row_num, column=5).value = value['link']
+        sheet.cell(row=row_num, column=5).alignment = Alignment(vertical='top')
         row_num += 1
 
     wb.save('Results %s.xlsx' % datetime.datetime.today().strftime('%Y-%m-%d'))
@@ -106,7 +108,7 @@ if __name__ == "__main__":
     try:
         with open('runlog.txt', 'r') as old_time_log:
             content = old_time_log.readlines()
-            last_line = content[-1].rstrip()
+        last_line = content[-1].rstrip()
 
         print("Script last ran at: " + last_line)
 
@@ -125,7 +127,10 @@ if __name__ == "__main__":
         new_time_log.write(current_time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
 
     # Define arguments and call scraping functions.
-    bsj_categories = ['operations', 'engineering'] #, 'marketing', 'other']
+    bsj_categories = ['operations', 'engineering'] #, 'design-ux',
+                      #'internships', 'sales', 'finance', 'product-management',
+                      #'contracting-positions', 'seeking-co-founders',
+                      #'hr-recruiting', 'marketing', 'other']
 
     for category in bsj_categories:
         bsj_results = scrape_bsj(category, old_time)
