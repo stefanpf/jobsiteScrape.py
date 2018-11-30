@@ -4,7 +4,7 @@
 # placements,  selects the interesting ones based on some hard-coded
 # criteria, and saves  the results in an easy to read spreadsheet.
 #
-# v0.4 - 2018-11-08
+# v0.6 - 2018-11-30
 
 import os
 import datetime
