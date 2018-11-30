@@ -40,10 +40,10 @@ def write_to_XLS(data_dictionary):
                                     % datetime.datetime.today()
                                     .strftime('%Y-%m-%d'))
         sheet = wb.active
-        print("Workbook opened.")
+        print("Opened spreadsheet to write results.")
 
     except FileNotFoundError:
-        print("Workbook not found, creating a new workbook...")
+        print("Spreadsheet not found, creating a new spreadsheet...")
         wb = openpyxl.Workbook()
         sheet = wb.active
         sheet.column_dimensions['A'].width = 30
@@ -64,12 +64,12 @@ def write_to_XLS(data_dictionary):
         sheet['E1'].value = "Link"
         wb.save('Results %s.xlsx'
                 % datetime.datetime.today().strftime('%Y-%m-%d'))
-        print("New workbook created.")
+        print("New spreadsheet created.")
         wb = openpyxl.load_workbook('Results %s.xlsx'
                                     % datetime.datetime.today()
                                     .strftime('%Y-%m-%d'))
         sheet = wb.active
-        print("Workbook opened.")
+        print("Opened spreadsheet to write results.")
 
     row_num = 2
     for row in range(1, sheet.max_row):
@@ -89,7 +89,7 @@ def write_to_XLS(data_dictionary):
         row_num += 1
 
     wb.save('Results %s.xlsx' % datetime.datetime.today().strftime('%Y-%m-%d'))
-    print("Workbook saved and closed.")
+    print("Results saved in spreadsheet and spreadsheet closed.")
 
     return True
 
