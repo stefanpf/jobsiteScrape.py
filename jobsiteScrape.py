@@ -16,10 +16,10 @@ from scrapers import scrape_stepstone, scrape_bsj
 
 # Results should come as a nested dictionary like so:
 # {<jobTitle> : {
-#		<company> : value,
-#		<desc> : value,
-#		<link> : value,
-#		<date> : value}}
+#       <company> : value,
+#       <desc> : value,
+#       <link> : value,
+#       <date> : value}}
 
 
 def clean_results(results):
@@ -93,6 +93,7 @@ def write_to_XLS(data_dictionary):
 
     return True
 
+
 if __name__ == "__main__":
 
     # Start time to calculate and print elapsed time at the end
@@ -104,7 +105,6 @@ if __name__ == "__main__":
     directory_name = os.path.dirname(absolute_path)
     os.chdir(directory_name)
 
-    # Do run time logging.
     try:
         with open('runlog.txt', 'r') as old_time_log:
             content = old_time_log.readlines()
@@ -127,10 +127,10 @@ if __name__ == "__main__":
         new_time_log.write(current_time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
 
     # Define arguments and call scraping functions.
-    bsj_categories = ['operations', 'engineering'] #, 'design-ux',
-                      #'internships', 'sales', 'finance', 'product-management',
-                      #'contracting-positions', 'seeking-co-founders',
-                      #'hr-recruiting', 'marketing', 'other']
+    bsj_categories = ['operations', 'engineering']  # , 'design-ux',
+    #'internships', 'sales', 'finance', 'product-management',
+    #'contracting-positions', 'seeking-co-founders',
+    #'hr-recruiting', 'marketing', 'other']
 
     for category in bsj_categories:
         bsj_results = scrape_bsj(category, old_time)
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     stepstone_search_string = ("5/ergebnisliste.html"
                                "?ws=Berlin"
                                "&fu=6000000%2C1000000%2C7002000%2C7006000"
-                               "&li=10&of=0" # no. of search results to display
+                               "&li=10&of=0"  # no. of search results to display
                                "&fci=419239&an=facets&fu=7008000"
                                "&fid=7008000&fn=categories&fa=select")
     stepstone_results = scrape_stepstone(stepstone_search_string, old_time)
