@@ -2,8 +2,6 @@ TODO as of 2018-11-30:
 
 NECESSARY:
 
-- scrape_stepstone(): scrape past initial search results limit and update results offset to get to last valid result
-
 - write_to_XLS(): prettify output, especially column D. Deduplicate results.
 
 - scrape_indeed(): their search functionality is extremely limited. Maybe don't include.
